@@ -35,7 +35,7 @@ const AttendancePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
-  const [activeTab, setActiveTab] = useState<'field' | 'packing' | 'office'>('field');
+  const [activeTab, setActiveTab] = useState<'all' | 'field' | 'packing' | 'office'>('all');
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -228,6 +228,16 @@ const AttendancePage = () => {
           <div className="mb-6">
             <div className="flex space-x-1 bg-muted p-1 rounded-lg">
               <button
+                onClick={() => setActiveTab('all')}
+                className={`flex-1 py-3 px-6 rounded-md text-sm font-medium transition-all ${
+                  activeTab === 'all'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                }`}
+              >
+                Overall Attendance
+              </button>
+              <button
                 onClick={() => setActiveTab('field')}
                 className={`flex-1 py-3 px-6 rounded-md text-sm font-medium transition-all ${
                   activeTab === 'field'
@@ -235,7 +245,7 @@ const AttendancePage = () => {
                     : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
                 }`}
               >
-                Field Area Employee
+                Field Area
               </button>
               <button
                 onClick={() => setActiveTab('packing')}
@@ -245,7 +255,7 @@ const AttendancePage = () => {
                     : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
                 }`}
               >
-                Packing Area Employee
+                Packing Area
               </button>
               <button
                 onClick={() => setActiveTab('office')}
@@ -261,7 +271,7 @@ const AttendancePage = () => {
           </div>
 
           {/* Attendance Table */}
-          <AttendanceTable data={attendanceData[activeTab]} />
+          <AttendanceTable data={activeTab === 'all' ? [...attendanceData.field, ...attendanceData.packing, ...attendanceData.office] : attendanceData[activeTab]} />
         </main>
       </div>
 
