@@ -8,19 +8,26 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 
 // Mock data for attendance
-const packingAttendance = [
-  { id: "P001", name: "Maria Santos", department: "Packing", position: "Packer", timeIn: "7:30 AM", timeOut: "5:00 PM", breakDuration: "1h", status: "Present" },
-  { id: "P002", name: "Juan Dela Cruz", department: "Packing", position: "Team Leader", timeIn: "7:00 AM", timeOut: "5:30 PM", breakDuration: "1h", status: "Present" },
-  { id: "P003", name: "Ana Rodriguez", department: "Packing", position: "Quality Control", timeIn: "8:15 AM", timeOut: "-", breakDuration: "-", status: "Late" },
-  { id: "P004", name: "Carlos Mendoza", department: "Packing", position: "Packer", timeIn: "-", timeOut: "-", breakDuration: "-", status: "Absent" },
-];
-
-const fieldAttendance = [
-  { id: "F001", name: "Pedro Gonzalez", department: "Field Operations", position: "Field Worker", timeIn: "6:00 AM", timeOut: "4:00 PM", breakDuration: "1h", status: "Present" },
-  { id: "F002", name: "Rosa Villareal", department: "Field Operations", position: "Supervisor", timeIn: "5:45 AM", timeOut: "4:30 PM", breakDuration: "1h", status: "Present" },
-  { id: "F003", name: "Miguel Torres", department: "Field Operations", position: "Equipment Operator", timeIn: "6:30 AM", timeOut: "-", breakDuration: "-", status: "Late" },
-  { id: "F004", name: "Carmen Reyes", department: "Field Operations", position: "Field Worker", timeIn: "-", timeOut: "-", breakDuration: "-", status: "Absent" },
-];
+const attendanceData = {
+  field: [
+    { id: "F001", name: "Pedro Gonzalez", department: "Field Operations", position: "Field Worker", timeIn: "6:00 AM", timeOut: "4:00 PM", breakDuration: "1h", status: "Present" },
+    { id: "F002", name: "Rosa Villareal", department: "Field Operations", position: "Supervisor", timeIn: "5:45 AM", timeOut: "4:30 PM", breakDuration: "1h", status: "Present" },
+    { id: "F003", name: "Miguel Torres", department: "Field Operations", position: "Equipment Operator", timeIn: "6:30 AM", timeOut: "-", breakDuration: "-", status: "Late" },
+    { id: "F004", name: "Carmen Reyes", department: "Field Operations", position: "Field Worker", timeIn: "-", timeOut: "-", breakDuration: "-", status: "Absent" },
+  ],
+  packing: [
+    { id: "P001", name: "Maria Santos", department: "Packing", position: "Packer", timeIn: "7:30 AM", timeOut: "5:00 PM", breakDuration: "1h", status: "Present" },
+    { id: "P002", name: "Juan Dela Cruz", department: "Packing", position: "Team Leader", timeIn: "7:00 AM", timeOut: "5:30 PM", breakDuration: "1h", status: "Present" },
+    { id: "P003", name: "Ana Rodriguez", department: "Packing", position: "Quality Control", timeIn: "8:15 AM", timeOut: "-", breakDuration: "-", status: "Late" },
+    { id: "P004", name: "Carlos Mendoza", department: "Packing", position: "Packer", timeIn: "-", timeOut: "-", breakDuration: "-", status: "Absent" },
+  ],
+  office: [
+    { id: "O001", name: "Jennifer Lopez", department: "Administration", position: "HR Manager", timeIn: "8:00 AM", timeOut: "5:00 PM", breakDuration: "1h", status: "Present" },
+    { id: "O002", name: "Roberto Santos", department: "Finance", position: "Accountant", timeIn: "8:30 AM", timeOut: "5:30 PM", breakDuration: "1h", status: "Present" },
+    { id: "O003", name: "Elena Cruz", department: "IT Support", position: "System Admin", timeIn: "9:15 AM", timeOut: "-", breakDuration: "-", status: "Late" },
+    { id: "O004", name: "Mark Dela Torre", department: "Administration", position: "Office Assistant", timeIn: "-", timeOut: "-", breakDuration: "-", status: "Absent" },
+  ]
+};
 
 const AttendancePage = () => {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -28,6 +35,7 @@ const AttendancePage = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [fromDate, setFromDate] = useState("");
   const [toDate, setToDate] = useState("");
+  const [activeTab, setActiveTab] = useState<'field' | 'packing' | 'office'>('field');
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -49,12 +57,9 @@ const AttendancePage = () => {
     );
   };
 
-  const AttendanceTable = ({ data, title }: { data: any[], title: string }) => (
-    <Card className="mb-6">
-      <CardHeader>
-        <CardTitle className="text-primary">{title}</CardTitle>
-      </CardHeader>
-      <CardContent>
+  const AttendanceTable = ({ data }: { data: any[] }) => (
+    <Card>
+      <CardContent className="p-6">
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
@@ -219,9 +224,44 @@ const AttendancePage = () => {
             </CardContent>
           </Card>
 
-          {/* Attendance Tables */}
-          <AttendanceTable data={packingAttendance} title="Packing Area Attendance" />
-          <AttendanceTable data={fieldAttendance} title="Field Area Attendance" />
+          {/* Horizontal Tabs */}
+          <div className="mb-6">
+            <div className="flex space-x-1 bg-muted p-1 rounded-lg">
+              <button
+                onClick={() => setActiveTab('field')}
+                className={`flex-1 py-3 px-6 rounded-md text-sm font-medium transition-all ${
+                  activeTab === 'field'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                }`}
+              >
+                Field Area Employee
+              </button>
+              <button
+                onClick={() => setActiveTab('packing')}
+                className={`flex-1 py-3 px-6 rounded-md text-sm font-medium transition-all ${
+                  activeTab === 'packing'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                }`}
+              >
+                Packing Area Employee
+              </button>
+              <button
+                onClick={() => setActiveTab('office')}
+                className={`flex-1 py-3 px-6 rounded-md text-sm font-medium transition-all ${
+                  activeTab === 'office'
+                    ? 'bg-primary text-primary-foreground shadow-sm'
+                    : 'text-muted-foreground hover:text-foreground hover:bg-background/50'
+                }`}
+              >
+                Office Staff
+              </button>
+            </div>
+          </div>
+
+          {/* Attendance Table */}
+          <AttendanceTable data={attendanceData[activeTab]} />
         </main>
       </div>
 
